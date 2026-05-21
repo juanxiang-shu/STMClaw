@@ -1,0 +1,14 @@
+numpy==1.26.4
+scipy==1.13.1
+opencv-python==4.11.0
+matplotlib==3.10.7
+keyboard
+google-genai
+torch==2.9.0+cpu
+torchvision==0.24.0+cpu
+Pillow==11.3.0
+httpx==0.27.0
+pubchempy
+scikit-learn==1.5.1
+albumentations==2.0.8
+DECIMER
