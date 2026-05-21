@@ -50,8 +50,8 @@ cd STMClaw
 2. Create and activate a Python environment:
 
 ```bash
-python -m venv .venv
-.\.venv\Scripts\activate
+python -m venv stmclaw-env
+.\stmclaw-env\Scripts\activate
 ```
 
 3. Install required packages:
@@ -59,14 +59,6 @@ python -m venv .venv
 ```bash
 pip install -r requirements.txt
 ```
-
-> If `requirements.txt` is not available, install the main dependencies used by the code manually:
-
-```bash
-pip install numpy scipy opencv-python matplotlib keyboard google-genai torch pillow httpx pubchempy
-```
-
----
 
 ## Configuration
 
