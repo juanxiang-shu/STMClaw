@@ -1,40 +1,30 @@
-# Autonomous STM Control and Tip Conditioning Framework
+# STMClaw — Autonomous STM Control Framework
 
-A Python-based research framework for autonomous STM operation and tip conditioning, designed for deployment within an OpenClaw-compatible STM automation workflow.
+STMClaw is a Python-based framework for autonomous STM operation and tip conditioning, designed for deployment within an OpenClaw-compatible STM automation workflow.
 
 ## Overview
 
-This repository implements a research-grade STM automation engine for high-resolution scanning, adaptive tip conditioning, and intelligent path planning.
+This repository implements an STM automation workflow for high-resolution scanning, adaptive tip conditioning, and intelligent path planning.
 
 The toolkit integrates:
 - real-time STM control via Nanonis TCP interface
 - image-based scan quality evaluation
 - autonomous tip conditioning strategies
-- customizable path planning and waypoint navigation
-- optional molecule matching using Gemini / LLM-assisted inference
+- customizable path planning
+- molecule assignment using LLM
 
 The core scan workflow is implemented in `Auto_scan.py`, and is intended to be launched through an OpenClaw STM orchestration layer or equivalent runtime wrapper.
-
-## Key Features
-
-- **Autonomous scanning loop** with real-time STM instrument interaction
-- **Tip conditioning agent** for adaptive repair and tip stabilization
-- **Path planning agent** supporting custom navigator instructions
-- **Image quality evaluation** using CV and learned heuristics
-- **Molecule matching / assignment pipeline** for structure-surface inference
-- **Modular architecture** with clear separation between conditioning, planning, evaluation, and assignment
 
 ## Repository Structure
 
 - `Auto_scan.py` — main driver implementing the scan workflow
 - `core.py` — Nanonis TCP control abstraction and STM instrument interface
-- `modules/conditioning_agent.py` — conditioning agent utilities and tip-conditioning logic
-- `modules/planning_agent.py` — planning agent utilities, path generation, and Gemini integration
+- `modules/conditioning_agent.py` — conditioning agent and tip-conditioning strategy
+- `modules/planning_agent.py` — planning agent, path generation, and LLM integration
 - `modules/evaluation.py` — scan quality evaluation helpers and image processing
-- `modules/assignment_agent.py` — molecule matching and assignment utilities
-- `mol_segment/` — segmentation model utilities and image processing for molecular feature extraction
-- `tasks/LineScanchecker.py` — line-scan analysis helper functions
-- `Evaluation/` — detection and evaluation scripts supporting experimental analysis
+- `modules/assignment_agent.py` — molecule assignment
+- `openclaw_adapter.py` — minimal OpenClaw-compatible bridge for starting STMClaw
+- `openclaw-config.yaml` — sample OpenClaw deployment configuration
 
 ## Installation
 
@@ -66,8 +56,8 @@ The framework expects several environment variables for external API access and 
 
 Required environment variables:
 
-- `GEMINI_API_KEY` — Gemini / Google GenAI API key for LLM-assisted path planning and evaluation
-- `CROSSREF_EMAIL` — email address used by paper search / assignment utilities
+- `GEMINI_API_KEY` — Google API key for LLM-assisted path planning and evaluation
+- `CROSSREF_EMAIL` — email address used by paper search
 
 Example:
 
@@ -76,33 +66,49 @@ $env:GEMINI_API_KEY = "your_api_key"
 $env:CROSSREF_EMAIL = "your.email@example.com"
 ```
 
+Optional runtime environment variables:
+
+- `STMCLAW_NAVIGATION_INSTRUCTION` — natural-language instruction for the navigation planner, used by the OpenClaw adapter.
+
 ## Usage
 
-This repository is designed to run as the STM scan engine within an OpenClaw automation deployment.
+This repository is intended to be consumed as the STM scan engine inside an OpenClaw-compatible orchestration layer.
 
-In production, your OpenClaw wrapper should:
+### OpenClaw deployment
+
+For production deployment, OpenClaw should:
 
 1. set the repository root as the working directory;
 2. activate the Python environment containing the project dependencies;
 3. export required runtime variables such as `GEMINI_API_KEY` and `CROSSREF_EMAIL`;
-4. launch `Auto_scan.py` as the core scan process; and
-5. manage logging, error recovery, and instrument session lifecycles.
+4. invoke STMClaw through the OpenClaw runtime so that OpenClaw manages instrument sessions, execution lifecycle, logging, and clean shutdowns; and
+5. handle any recovery or retry logic around STM execution.
 
-For development and debugging, the underlying scan engine is exposed by `Auto_scan.py`.
+This repository includes a minimal OpenClaw compatibility bridge:
+
+- `openclaw_adapter.py` — a adapter module that exposes `run_stmclaw()` as an entrypoint
+- `openclaw-config.yaml` — a sample OpenClaw deployment configuration
 
 A typical OpenClaw deployment flow is:
 
 ```powershell
 cd "STMClaw"
-.\.venv\Scripts\activate
+.\stmclaw-env\Scripts\activate
 $env:GEMINI_API_KEY = "your_api_key"
 $env:CROSSREF_EMAIL = "your.email@example.com"
-python Auto_scan.py
+# Start the OpenClaw orchestration runtime, which loads STMClaw as the scan engine
+openclaw run --config openclaw-config.yaml
 ```
 
-`Auto_scan.py` initializes the STM controller, configures the navigator, and enters the autonomous scanning loop.
+> Note: `openclaw_adapter.py` is a minimal compatibility stub. Full production integration may require additional hooks for session lifecycle, retries, structured logging, and graceful shutdown.
 
-For targeted agent testing and development, use the module entry points in `modules/` and `Evaluation/`.
+### Local development
+
+For local debugging and development, the scan workflow is still directly executable via `python Auto_scan.py`.
+
+### Targeted testing
+
+For module-level testing, use the entry points in `modules/` and `Evaluation/`.
 
 ## Contribution
 
