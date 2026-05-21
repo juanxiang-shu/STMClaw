@@ -1,21 +1,21 @@
 # Autonomous STM Control and Tip Conditioning Framework
 
-An integrated Python framework for autonomous scanning tunneling microscopy (STM) operation, tip conditioning, and molecule matching using Nanonis TCP control, image quality evaluation, and Gemini-assisted planning.
+A Python-based research framework for autonomous STM operation and tip conditioning, designed for deployment within an OpenClaw-compatible STM automation workflow.
 
 ---
 
 ## Overview
 
-This repository implements a research-grade STM automation system designed for high-resolution scanning, adaptive tip conditioning, and path planning.
+This repository implements a research-grade STM automation engine for high-resolution scanning, adaptive tip conditioning, and intelligent path planning.
 
-The toolkit combines:
+The toolkit integrates:
 - real-time STM control via Nanonis TCP interface
 - image-based scan quality evaluation
 - autonomous tip conditioning strategies
 - customizable path planning and waypoint navigation
-- optional molecule matching using Gemini / LLM-driven inference
+- optional molecule matching using Gemini / LLM-assisted inference
 
-The entry point is `Auto_scan.py`, which orchestrates scan execution, evaluation, conditioning, and planning.
+The core scan workflow is implemented in `Auto_scan.py`, and is intended to be launched through an OpenClaw STM orchestration layer or equivalent runtime wrapper.
 
 ---
 
@@ -51,8 +51,8 @@ This project is developed for Python and is best run in an isolated environment.
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd "SPM-nanonis_TCP - Copy"
+git clone <repository-url> STMClaw
+cd STMClaw
 ```
 
 2. Create and activate a Python environment:
@@ -85,18 +85,6 @@ Required environment variables:
 - `GEMINI_API_KEY` — Gemini / Google GenAI API key for LLM-assisted path planning and evaluation
 - `CROSSREF_EMAIL` — email address used by paper search / assignment utilities
 
-Optional variables:
-
-- `GEMINI_MODEL` — default Gemini model name (e.g. `gemini-2.5-flash`)
-- `GEMINI_MODEL_NAVIGATOR` — Gemini model for navigator requests
-- `GEMINI_MODEL_PATH` — Gemini model for path-related requests
-- `GEMINI_MODEL_CODEGEN` — Gemini model for code generation tasks
-- `GEMINI_TIMEOUT` — request timeout in seconds
-- `GEMINI_RETRIES` — number of retry attempts when Gemini calls fail
-- `GEMINI_RETRY_BACKOFF` — backoff delay between Gemini retries
-- `MOLECULE_MATCH_ENABLED` — enable or disable molecule matching (`1` / `0`)
-- `MOLECULE_MATCH_INTERVAL` — evaluation interval for molecule matching
-
 Example:
 
 ```powershell
@@ -108,23 +96,31 @@ $env:CROSSREF_EMAIL = "your.email@example.com"
 
 ## Usage
 
-Run the main scan workflow with:
+This repository is designed to run as the STM scan engine within an OpenClaw automation deployment.
 
-```bash
+In production, your OpenClaw wrapper should:
+
+1. set the repository root as the working directory;
+2. activate the Python environment containing the project dependencies;
+3. export required runtime variables such as `GEMINI_API_KEY` and `CROSSREF_EMAIL`;
+4. launch `Auto_scan.py` as the core scan process; and
+5. manage logging, error recovery, and instrument session lifecycles.
+
+For development and debugging, the underlying scan engine is exposed by `Auto_scan.py`.
+
+A typical OpenClaw deployment flow is:
+
+```powershell
+cd "STMClaw"
+.\.venv\Scripts\activate
+$env:GEMINI_API_KEY = "your_api_key"
+$env:CROSSREF_EMAIL = "your.email@example.com"
 python Auto_scan.py
 ```
 
-`Auto_scan.py` initializes the scan controller, configures the navigator, and enters the autonomous STM scanning loop.
+`Auto_scan.py` initializes the STM controller, configures the navigator, and enters the autonomous scanning loop.
 
-For targeted agent testing and development, use the corresponding module entry points in `modules/` and `Evaluation/`.
-
----
-
-## Notes for GitHub Publication
-
-- Sensitive credentials are no longer stored in source code.
-- Local workspace artifacts such as `.idea/`, `.vscode/`, virtual environments, logs, and temporary caches are excluded from version control.
-- The code is organized to keep scientific logic separate from instrument control and model utilities.
+For targeted agent testing and development, use the module entry points in `modules/` and `Evaluation/`.
 
 ---
 
