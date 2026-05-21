@@ -1,7 +1,3 @@
-# core.py by CoccaGuo at 2022/05/16 16:45
-##############################################
-# core.py renew by Zhiwen Zhu at 2023/07/21
-##############################################
 import logging
 import time
 from abc import ABCMeta, abstractmethod
