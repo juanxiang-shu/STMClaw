@@ -43,7 +43,7 @@ This project is developed for Python and is best run in an isolated environment.
 1. Clone the repository:
 
 ```bash
-git clone <repository-url> STMClaw
+git clone https://github.com/juanxiang-shu/STMClaw.git
 cd STMClaw
 ```
 
