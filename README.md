@@ -2,8 +2,6 @@
 
 A Python-based research framework for autonomous STM operation and tip conditioning, designed for deployment within an OpenClaw-compatible STM automation workflow.
 
----
-
 ## Overview
 
 This repository implements a research-grade STM automation engine for high-resolution scanning, adaptive tip conditioning, and intelligent path planning.
@@ -17,8 +15,6 @@ The toolkit integrates:
 
 The core scan workflow is implemented in `Auto_scan.py`, and is intended to be launched through an OpenClaw STM orchestration layer or equivalent runtime wrapper.
 
----
-
 ## Key Features
 
 - **Autonomous scanning loop** with real-time STM instrument interaction
@@ -27,8 +23,6 @@ The core scan workflow is implemented in `Auto_scan.py`, and is intended to be l
 - **Image quality evaluation** using CV and learned heuristics
 - **Molecule matching / assignment pipeline** for structure-surface inference
 - **Modular architecture** with clear separation between conditioning, planning, evaluation, and assignment
-
----
 
 ## Repository Structure
 
@@ -41,8 +35,6 @@ The core scan workflow is implemented in `Auto_scan.py`, and is intended to be l
 - `mol_segment/` — segmentation model utilities and image processing for molecular feature extraction
 - `tasks/LineScanchecker.py` — line-scan analysis helper functions
 - `Evaluation/` — detection and evaluation scripts supporting experimental analysis
-
----
 
 ## Installation
 
@@ -92,8 +84,6 @@ $env:GEMINI_API_KEY = "your_api_key"
 $env:CROSSREF_EMAIL = "your.email@example.com"
 ```
 
----
-
 ## Usage
 
 This repository is designed to run as the STM scan engine within an OpenClaw automation deployment.
@@ -122,8 +112,6 @@ python Auto_scan.py
 
 For targeted agent testing and development, use the module entry points in `modules/` and `Evaluation/`.
 
----
-
 ## Contribution
 
 This repository is intended as a research tool and can be extended with:
@@ -135,8 +123,6 @@ This repository is intended as a research tool and can be extended with:
 - experiment logging and analysis dashboards
 
 If you contribute, please follow clean Python packaging practices and avoid committing API keys or local configuration.
-
----
 
 ## License
 
