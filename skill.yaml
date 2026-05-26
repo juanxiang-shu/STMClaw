@@ -1,0 +1,13 @@
+name: stmclaw
+version: 1.0.0
+description: "STMClaw autonomous STM scan control system"
+
+tools:
+  - name: start_scan
+    description: "Start an STM scan task"
+    entrypoint: scripts/start_scan.py
+    args:
+      - name: instruction
+        type: string
+        required: false
+        default: "The scan shall start from the top-left and proceed in a serpentine pattern."
