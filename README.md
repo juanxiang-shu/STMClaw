@@ -76,31 +76,49 @@ This repository is intended to be consumed as the STM scan engine inside an Open
 
 ### OpenClaw deployment
 
+STMClaw is now packaged as an OpenClaw skill. The root [skill.yaml](skill.yaml) declares the skill metadata and the `start_scan` tool, and the packaged runtime assets are stored under [stmclaw-skill](stmclaw-skill).
+
 For production deployment, OpenClaw should:
 
-1. set the repository root as the working directory;
-2. activate the Python environment containing the project dependencies;
-3. export required runtime variables such as `GEMINI_API_KEY` and `CROSSREF_EMAIL`;
-4. invoke STMClaw through the OpenClaw runtime so that OpenClaw manages instrument sessions, execution lifecycle, logging, and clean shutdowns; and
-5. handle any recovery or retry logic around STM execution.
+1. load the installed STMClaw skill (or register the repository root so the skill manifest is discoverable);
+2. activate the Python environment containing the project dependencies, typically `stmclaw-env`;
+3. ensure required runtime variables are available, either through the environment or via [stmclaw-skill/config.env](stmclaw-skill/config.env);
+4. invoke the skill’s `start_scan` tool so OpenClaw manages the session lifecycle, logging, and shutdown; and
+5. pass the navigation instruction through the skill arguments when a custom scan route is required.
 
-This repository includes a minimal OpenClaw compatibility bridge:
+The packaged skill entrypoints are:
 
-- `openclaw_adapter.py` — a adapter module that exposes `run_stmclaw()` as an entrypoint
-- `openclaw-config.yaml` — a sample OpenClaw deployment configuration
+- [skill.yaml](skill.yaml) — skill manifest and declared tool(s)
+- [stmclaw-skill/SKILL.md](stmclaw-skill/SKILL.md) — skill usage notes
+- [stmclaw-skill/scripts/start_scan.py](stmclaw-skill/scripts/start_scan.py) — wrapper that loads [stmclaw-skill/config.env](stmclaw-skill/config.env) and launches the adapter
+- [openclaw_adapter.py](openclaw_adapter.py) — runtime adapter that executes the STMClaw workflow
 
 A typical OpenClaw deployment flow is:
 
 ```powershell
-cd "STMClaw"
+# 1. Install the STMClaw skill (one-time setup)
+openclaw skills install ".\STMClaw\stmclaw-skill" --as stmclaw
+
+# 2. Activate the Python environment
+cd ".\STMClaw"
 .\stmclaw-env\Scripts\activate
-$env:GEMINI_API_KEY = "your_api_key"
-$env:CROSSREF_EMAIL = "your.email@example.com"
-# Start the OpenClaw orchestration runtime, which loads STMClaw as the scan engine
-openclaw run --config openclaw-config.yaml
+
+# 3. Ensure GEMINI_API_KEY and CROSSREF_EMAIL are available in the environment
+
+# 4. Start the OpenClaw gateway and invoke the STMClaw skill
+openclaw gateway start
+# Then use the skill via OpenClaw's tool system, e.g., call the stmclaw/start_scan tool
 ```
 
-> Note: `openclaw_adapter.py` is a minimal compatibility stub. Full production integration may require additional hooks for session lifecycle, retries, structured logging, and graceful shutdown.
+If you want to validate the packaged wrapper directly before wiring it into OpenClaw, run:
+
+```powershell
+cd ".\STMClaw"
+.\stmclaw-env\Scripts\activate
+python .\stmclaw-skill\scripts\start_scan.py --instruction "scan the center region in a spiral pattern"
+```
+
+> Note: the supported deployment path is now the packaged skill under [stmclaw-skill](stmclaw-skill). The adapter remains the runtime bridge that executes the actual scan logic.
 
 ### Local development
 
